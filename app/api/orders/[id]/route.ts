@@ -9,9 +9,10 @@ export async function GET(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   try {
     const order = await prisma.order.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         items: true,
         shippingInfo: true,
@@ -36,9 +37,10 @@ export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   try {
     const order = await prisma.order.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: { shippingInfo: true },
     });
 
@@ -52,15 +54,15 @@ export async function PUT(
     if ("status" in body) {
       const statusUpdate = body as UpdateOrderStatusRequest;
       await prisma.order.update({
-        where: { id: params.id },
+        where: { id: id },
         data: { status: statusUpdate.status },
       });
     }
 
     if ("trackingCompany" in body && "trackingNumber" in body) {
       const shippingUpdate = body as UpdateShippingInfoRequest;
-      await prisma.shippingInfo.update({
-        where: { orderId: params.id },
+      await prisma.orderShippingInfo.update({
+        where: { orderId: id },
         data: {
           trackingCompany: shippingUpdate.trackingCompany,
           trackingNumber: shippingUpdate.trackingNumber,
@@ -69,7 +71,7 @@ export async function PUT(
     }
 
     const updatedOrder = await prisma.order.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         items: true,
         shippingInfo: true,
@@ -90,9 +92,10 @@ export async function DELETE(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   try {
     const order = await prisma.order.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     if (!order) {
@@ -101,15 +104,15 @@ export async function DELETE(
 
     // Delete related records first
     await prisma.orderItem.deleteMany({
-      where: { orderId: params.id },
+      where: { orderId: id },
     });
 
-    await prisma.shippingInfo.delete({
-      where: { orderId: params.id },
+    await prisma.orderShippingInfo.delete({
+      where: { orderId: id },
     });
 
     await prisma.order.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     return NextResponse.json({ message: "Order deleted successfully" });

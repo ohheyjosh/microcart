@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CreateOrderForm from "../CreateOrderForm";
-import { act } from "react";
 
 // Mock the fetch function
 global.fetch = jest.fn();

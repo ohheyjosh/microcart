@@ -37,3 +37,12 @@ export interface CreateOrderRequest {
   items: OrderItem[];
   shippingInfo: OrderShippingInfo;
 }
+
+export interface UpdateOrderStatusRequest {
+  status: OrderStatus;
+}
+
+export interface UpdateShippingInfoRequest {
+  trackingCompany: string;
+  trackingNumber: string;
+}

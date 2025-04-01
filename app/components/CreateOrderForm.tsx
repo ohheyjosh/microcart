@@ -16,7 +16,13 @@ interface OrderShippingInfo {
   country: string;
 }
 
-export default function CreateOrderForm() {
+interface CreateOrderFormProps {
+  onOrderCreated: () => void;
+}
+
+export default function CreateOrderForm({
+  onOrderCreated,
+}: CreateOrderFormProps) {
   const [items, setItems] = useState<OrderItem[]>([
     { productId: "", quantity: 1, price: 0 },
   ]);
@@ -69,6 +75,9 @@ export default function CreateOrderForm() {
       // Reset form
       form.reset();
       setItems([{ productId: "", quantity: 1, price: 0 }]);
+
+      // Notify parent component to refresh orders
+      onOrderCreated();
     } catch (err) {
       console.error(`Failed to create order: ${err}`);
     }
